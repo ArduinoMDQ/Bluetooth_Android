@@ -4,6 +4,7 @@ const int PinSensorA=3;            // boton conectado al pin 4
 const int PinSensorB=4;
 const int PinSensorC=5;
 const int PinRelayPuerta=6;
+const int PinBluetoothReset=7;
 
 const int tiempoAntirebote =10;
 
@@ -22,9 +23,9 @@ int estadoBotonAnteriorC;
 
 /*Función antirebote*/
 boolean antirebote  (int pin ) {
-  int  contador =0;
-  boolean estado;            // guarda el estado del boton 
-  boolean estadoAnterior;    // guarda el ultimo estado del boton 
+int  contador =0;
+boolean estado;            // guarda el estado del boton 
+boolean estadoAnterior;    // guarda el ultimo estado del boton 
 
   do {
     estado = digitalRead (pin);
@@ -45,6 +46,7 @@ void serialEvent() {
   while (Serial.available()) {
     // get the new byte:
     char inChar = (char)Serial.read(); 
+   //  Serial.println(inChar); 
     // add it to the inputString:
     inputString += inChar;
     // if the incoming character is a newline, set a flag
@@ -61,17 +63,65 @@ void setup (){
   pinMode(PinSensorB,INPUT); //declaramos el boton como entrada
   pinMode(PinSensorC,INPUT); //declaramos el boton como entrada
   pinMode(PinRelayPuerta,OUTPUT);
-
-   pinMode(13,OUTPUT);
-   digitalWrite(13,LOW);
-  inputString.reserve(100);
+  pinMode(PinBluetoothReset,OUTPUT);
+  
+ digitalWrite(PinBluetoothReset,HIGH);
+ delay(100);
+ digitalWrite(PinBluetoothReset,LOW);
+ delay(100);
+ digitalWrite(PinBluetoothReset,HIGH);
+ digitalWrite(PinRelayPuerta,LOW);
+  
+ pinMode(13,OUTPUT);
+ digitalWrite(13,LOW);
+ inputString.reserve(100);
 }
+
+void Funcion(char var){
+  
+  switch(var){
+
+
+     case 'F':
+     Serial.write ("f\r\n");//Fake alarm
+    break;
+    case 'L':
+     Serial.write ("l\r\n");//Loop
+    break;
+    
+    case 'E':
+     Serial.write ("e\r\n");//conexion exitosa del bluetooth
+    break;
+    
+    case 'B':
+      Serial.write ("b\r\n");  // reset bluetooth
+      delay(100);
+      digitalWrite(PinBluetoothReset,LOW);
+      delay(100);
+      digitalWrite(PinBluetoothReset,HIGH);
+    break;
+
+    case 'O':
+      Serial.write ("o\r\n"); 
+      digitalWrite(PinRelayPuerta,HIGH);
+      delay(TiempoApertura*1000);
+      digitalWrite(PinRelayPuerta,LOW);//open Door Timer    
+    break;
+    
+    default:
+    break;    
+    
+    }
+  
+  inputString = "";
+  stringComplete = false;
+  }
 
 void loop () {
   
   estadoBotonA =digitalRead (PinSensorA);              //leemos el estado del boton
-  estadoBotonB =digitalRead (PinSensorB);              //leemos el estado del boton
-  estadoBotonC =digitalRead (PinSensorC);              //leemos el estado del boton
+ // estadoBotonB =digitalRead (PinSensorB);              //leemos el estado del boton
+//  estadoBotonC =digitalRead (PinSensorC);              //leemos el estado del boton
  
   
   if ((estadoBotonA  != estadoBotonAnteriorA)||(estadoBotonA==1)) {     //si hay cambio con respeto al estado 
@@ -101,38 +151,14 @@ void loop () {
  
       estadoBotonAnteriorC = estadoBotonC;      // guardamos el estado del boton
   
-  
-  
-  
-  
-  // Aca agrego la parte de datos seriales
-   if (stringComplete) {
-   // Serial.println(inputString); 
-    
-    if(inputString=="n\n"){
-       digitalWrite(PinRelayPuerta,LOW);
-       Serial.write ("n\r\n");         
-       }
-    if(inputString=="s\n"){
-        digitalWrite(PinRelayPuerta,HIGH);
-        Serial.write ("s\r\n");         
-        }
-    if(inputString=="o\n"){
-        digitalWrite(PinRelayPuerta,HIGH);
-        Serial.write ("s\r\n");         
-         delay(TiempoApertura*1000);
-         digitalWrite(PinRelayPuerta,LOW);
-        Serial.write ("n\r\n");         
-        }
-   // clear the string:
-    inputString = "";
-    stringComplete = false;
-    */
+  */
+     if (stringComplete) {
+    Funcion(inputString[0]);}
   }
-  
-  
-  
-}
 
+
+  
+  
+  
 
 
