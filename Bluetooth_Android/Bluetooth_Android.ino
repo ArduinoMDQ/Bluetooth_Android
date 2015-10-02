@@ -1,7 +1,9 @@
 #include <TimerOne.h>
 int ledState = LOW;
-String inputString = "";         // a string to hold incoming data
-boolean stringComplete = false;  // whether the string is complete
+static String inputString = "";         // a string to hold incoming data
+static boolean stringComplete = false;  // whether the string is complete
+
+
 
 const int PinSensorA=2;            // boton conectado al pin 4
 const int PinSensorB=3;
@@ -15,8 +17,9 @@ const int tiempoAntirebote =10;
 
 int comandos=0;
 int TiempoEnmascarado=20;
-int TiempoApertura=10;
+int TiempoApertura=5;
 
+static  int CONTADOR=0;
 int cuenta =0;          //Guarda el numero de veces que el boton ha sido presionado
 static int estadoBotonA=0;
 static int memA=0;
@@ -121,12 +124,12 @@ void Funcion(char var){
 
     case 'O':
       Serial.write ("o\r\n"); 
+      CONTADOR=0;
       digitalWrite(PinRelayPuerta,HIGH);
-      digitalWrite(13,LOW);
-      delay(TiempoApertura*1000);
-      digitalWrite(PinRelayPuerta,LOW);//open Door Timer    
-      digitalWrite(13,HIGH);
-    break;
+   
+     // delay(TiempoApertura*1000);
+     // digitalWrite(PinRelayPuerta,LOW);//open Door Timer    
+       break;
     
     default:
     break;    
@@ -138,98 +141,54 @@ void Funcion(char var){
   }
 
 void loop () {
-
+   if (stringComplete) {
+      
+    Funcion(inputString[0]);}
+    
   if (memA){   
       memA=0;
          Serial.write ("A\r\n");         //checamos  si esta preionado y si lo esta
          delay(TiempoEnmascarado*1000);
  
    }
+   if (stringComplete) {
+      
+    Funcion(inputString[0]);}
+    
  if (memB){   
       memB=0;
          Serial.write ("B\r\n");         //checamos  si esta preionado y si lo esta
          delay(TiempoEnmascarado*1000);
  
    }
+  if (stringComplete) {
+      
+    Funcion(inputString[0]);}
+    
+ 
     if (memC){   
       memC=0;
          Serial.write ("C\r\n");         //checamos  si esta preionado y si lo esta
          delay(TiempoEnmascarado*1000);
  
    }
+  if (stringComplete) {
+      
+    Funcion(inputString[0]);}
+    
+  
     if (memD){   
       memD=0;
          Serial.write ("D\r\n");         //checamos  si esta preionado y si lo esta
          delay(TiempoEnmascarado*1000);
  
    }
-  
-/* estadoBotonA =digitalRead (PinSensorA);              //leemos el estado del boton
- 
-  if ((estadoBotonA  != estadoBotonAnteriorA)||(estadoBotonA==1)) {     //si hay cambio con respeto al estado 
-    if (antirebote (PinSensorA)){   
-         Serial.write ("A\r\n");         //checamos  si esta preionado y si lo esta
-            Serial.println();
-   //       digitalWrite(13,LOW);
-          delay(TiempoEnmascarado*1000);
-   //       digitalWrite(13,HIGH);
-    estadoBotonA=0;
-   }
-  }
-
-  
- estadoBotonB =digitalRead (PinSensorB);              //leemos el estado del boton*/
- 
-
-   if ((estadoBotonB  != estadoBotonAnteriorB)||(estadoBotonB==1)) {     //si hay cambio con respeto al estado 
-    if (antirebote (PinSensorB)){   
-         Serial.write ("B\r\n");         //checamos  si esta preionado y si lo esta
-      
-          delay(TiempoEnmascarado*1000);
-     
-        estadoBotonB=0;
-   }
-  }
-   estadoBotonAnteriorB = estadoBotonB;      // guardamos el estado del boton
-  
-  estadoBotonC =digitalRead (PinSensorC);              //leemos el estado del boton
- 
-  
-   if ((estadoBotonC  != estadoBotonAnteriorC)||(estadoBotonC==1)) {     //si hay cambio con respeto al estado 
-    if (antirebote (PinSensorC)){   
-         Serial.write ("C\r\n");         //checamos  si esta preionado y si lo esta
-            Serial.println();
-    //        digitalWrite(13,LOW);
-          delay(TiempoEnmascarado*1000);
-   //       digitalWrite(13,HIGH);
-    estadoBotonC=0;
-   }
-  }
- 
-      estadoBotonAnteriorC = estadoBotonC;      // guardamos el estado del boton
-  
-// estadoBotonD =digitalRead (PinSensorD);              //leemos el estado del boton
- 
-  
-   if ((estadoBotonD  != estadoBotonAnteriorD)||(estadoBotonD==1)) {     //si hay cambio con respeto al estado 
-    if (antirebote (PinSensorD)){   
-         Serial.write ("D\r\n");         //checamos  si esta preionado y si lo esta
-            Serial.println();
-     
-          delay(TiempoEnmascarado*1000);
-   
-         estadoBotonD=0;
-   }
-  }
- 
-      estadoBotonAnteriorD = estadoBotonD;      // guardamos el estado del boton
- 
-     
-     if (stringComplete) {
+    if (stringComplete) {
       
     Funcion(inputString[0]);}
+    
 
-   
+ 
   }
 
 
@@ -283,13 +242,13 @@ void blinkLED(void)
   estadoBotonAnteriorD = estadoBotonD;
 
   } else {
-    ledState = LOW;
-  //   Serial.print(" estA:"); Serial.print(memA);
- //        Serial.print(" estB:"); Serial.print(memB);
- //            Serial.print(" estC:"); Serial.print(memC);
- //                Serial.print(" estD:"); Serial.println(memD);
-     
   
+    ledState = LOW;
+    
+   CONTADOR++;
+  if(CONTADOR==TiempoApertura){
+    digitalWrite(PinRelayPuerta,LOW);//open Door Timer  
+    }
   }
   digitalWrite(13,ledState);
     
