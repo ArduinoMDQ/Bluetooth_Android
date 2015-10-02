@@ -1,3 +1,5 @@
+#include <TimerOne.h>
+int ledState = LOW;
 String inputString = "";         // a string to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 
@@ -16,14 +18,18 @@ int TiempoEnmascarado=20;
 int TiempoApertura=10;
 
 int cuenta =0;          //Guarda el numero de veces que el boton ha sido presionado
-int estadoBotonA;
-int estadoBotonAnteriorA;
-int estadoBotonB;
-int estadoBotonAnteriorB;
-int estadoBotonC;
-int estadoBotonAnteriorC;
-int estadoBotonD;
-int estadoBotonAnteriorD;
+static int estadoBotonA=0;
+static int memA=0;
+static int estadoBotonAnteriorA=0;
+static int estadoBotonB=0;
+static int memB=0;
+static int estadoBotonAnteriorB=0;
+static int estadoBotonC=0;
+static int memC=0;
+static int estadoBotonAnteriorC=0;
+static int estadoBotonD=0;
+static int memD=0;
+static int estadoBotonAnteriorD=0;
 
 /*Función antirebote*/
 boolean antirebote  (int pin ) {
@@ -83,6 +89,9 @@ void setup (){
  pinMode(13,OUTPUT);
  digitalWrite(13,HIGH);
  inputString.reserve(100);
+
+  Timer1.initialize(1000000);
+  Timer1.attachInterrupt(blinkLED); // blinkLED to run every 0.15 seconds
  
 }
 
@@ -129,29 +138,56 @@ void Funcion(char var){
   }
 
 void loop () {
+
+  if (memA){   
+      memA=0;
+         Serial.write ("A\r\n");         //checamos  si esta preionado y si lo esta
+         delay(TiempoEnmascarado*1000);
+ 
+   }
+ if (memB){   
+      memB=0;
+         Serial.write ("B\r\n");         //checamos  si esta preionado y si lo esta
+         delay(TiempoEnmascarado*1000);
+ 
+   }
+    if (memC){   
+      memC=0;
+         Serial.write ("C\r\n");         //checamos  si esta preionado y si lo esta
+         delay(TiempoEnmascarado*1000);
+ 
+   }
+    if (memD){   
+      memD=0;
+         Serial.write ("D\r\n");         //checamos  si esta preionado y si lo esta
+         delay(TiempoEnmascarado*1000);
+ 
+   }
   
-  estadoBotonA =digitalRead (PinSensorA);              //leemos el estado del boton
+/* estadoBotonA =digitalRead (PinSensorA);              //leemos el estado del boton
  
   if ((estadoBotonA  != estadoBotonAnteriorA)||(estadoBotonA==1)) {     //si hay cambio con respeto al estado 
     if (antirebote (PinSensorA)){   
          Serial.write ("A\r\n");         //checamos  si esta preionado y si lo esta
-          digitalWrite(13,LOW);
+            Serial.println();
+   //       digitalWrite(13,LOW);
           delay(TiempoEnmascarado*1000);
-          digitalWrite(13,HIGH);
+   //       digitalWrite(13,HIGH);
+    estadoBotonA=0;
    }
   }
-   estadoBotonAnteriorA = estadoBotonA;      // guardamos el estado del boton
 
   
-  estadoBotonB =digitalRead (PinSensorB);              //leemos el estado del boton
+ estadoBotonB =digitalRead (PinSensorB);              //leemos el estado del boton*/
  
 
    if ((estadoBotonB  != estadoBotonAnteriorB)||(estadoBotonB==1)) {     //si hay cambio con respeto al estado 
     if (antirebote (PinSensorB)){   
          Serial.write ("B\r\n");         //checamos  si esta preionado y si lo esta
-          digitalWrite(13,LOW);
+      
           delay(TiempoEnmascarado*1000);
-          digitalWrite(13,HIGH);
+     
+        estadoBotonB=0;
    }
   }
    estadoBotonAnteriorB = estadoBotonB;      // guardamos el estado del boton
@@ -162,27 +198,33 @@ void loop () {
    if ((estadoBotonC  != estadoBotonAnteriorC)||(estadoBotonC==1)) {     //si hay cambio con respeto al estado 
     if (antirebote (PinSensorC)){   
          Serial.write ("C\r\n");         //checamos  si esta preionado y si lo esta
-            digitalWrite(13,LOW);
+            Serial.println();
+    //        digitalWrite(13,LOW);
           delay(TiempoEnmascarado*1000);
-          digitalWrite(13,HIGH);
+   //       digitalWrite(13,HIGH);
+    estadoBotonC=0;
    }
   }
  
       estadoBotonAnteriorC = estadoBotonC;      // guardamos el estado del boton
   
-  estadoBotonD =digitalRead (PinSensorD);              //leemos el estado del boton
+// estadoBotonD =digitalRead (PinSensorD);              //leemos el estado del boton
  
   
    if ((estadoBotonD  != estadoBotonAnteriorD)||(estadoBotonD==1)) {     //si hay cambio con respeto al estado 
     if (antirebote (PinSensorD)){   
          Serial.write ("D\r\n");         //checamos  si esta preionado y si lo esta
-            digitalWrite(13,LOW);
+            Serial.println();
+     
           delay(TiempoEnmascarado*1000);
-          digitalWrite(13,HIGH);
+   
+         estadoBotonD=0;
    }
   }
  
       estadoBotonAnteriorD = estadoBotonD;      // guardamos el estado del boton
+ 
+     
      if (stringComplete) {
       
     Funcion(inputString[0]);}
@@ -191,3 +233,64 @@ void loop () {
   }
 
 
+void blinkLED(void)
+{
+  if (ledState == LOW) {
+    ledState = HIGH;
+    
+  
+  estadoBotonA =digitalRead (PinSensorA);              //leemos el estado del boton
+ 
+  if ((estadoBotonA  != estadoBotonAnteriorA)||(estadoBotonA==1)) {     //si hay cambio con respeto al estado 
+    if (antirebote (PinSensorA)){   
+      memA=1;
+ 
+    }
+  }
+  estadoBotonAnteriorA = estadoBotonA;
+
+   
+  estadoBotonB =digitalRead (PinSensorA);              //leemos el estado del boton
+ 
+  if ((estadoBotonB  != estadoBotonAnteriorB)||(estadoBotonB==1)) {     //si hay cambio con respeto al estado 
+    if (antirebote (PinSensorB)){   
+      memB=1;
+ 
+    }
+  }
+  estadoBotonAnteriorB = estadoBotonB;
+
+   
+  estadoBotonC =digitalRead (PinSensorC);              //leemos el estado del boton
+ 
+  if ((estadoBotonC != estadoBotonAnteriorC)||(estadoBotonC==1)) {     //si hay cambio con respeto al estado 
+    if (antirebote (PinSensorC)){   
+      memC=1;
+ 
+    }
+  }
+  estadoBotonAnteriorC = estadoBotonC;
+
+   
+  estadoBotonD =digitalRead (PinSensorD);              //leemos el estado del boton
+ 
+  if ((estadoBotonD  != estadoBotonAnteriorD)||(estadoBotonD==1)) {     //si hay cambio con respeto al estado 
+    if (antirebote (PinSensorD)){   
+      memD=1;
+ 
+    }
+  }
+  estadoBotonAnteriorD = estadoBotonD;
+
+  } else {
+    ledState = LOW;
+  //   Serial.print(" estA:"); Serial.print(memA);
+ //        Serial.print(" estB:"); Serial.print(memB);
+ //            Serial.print(" estC:"); Serial.print(memC);
+ //                Serial.print(" estD:"); Serial.println(memD);
+     
+  
+  }
+  digitalWrite(13,ledState);
+    
+}
