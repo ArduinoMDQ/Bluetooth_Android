@@ -59,9 +59,9 @@ void serialEvent() {
 
 void setup (){                      
   Serial.begin(9600);   //Iniciamos la comunicacion serial
-  pinMode(PinSensorA,INPUT); //declaramos el boton como entrada
-  pinMode(PinSensorB,INPUT); //declaramos el boton como entrada
-  pinMode(PinSensorC,INPUT); //declaramos el boton como entrada
+  pinMode(PinSensorA,INPUT); // Alarma de Intrusion
+  pinMode(PinSensorB,INPUT); // alarma de Intrusion
+  pinMode(PinSensorC,INPUT); // alarma de Apertura
   pinMode(PinRelayPuerta,OUTPUT);
   pinMode(PinBluetoothReset,OUTPUT);
   
@@ -95,7 +95,7 @@ void Funcion(char var){
     
     case 'B':
       Serial.write ("b\r\n");  // reset bluetooth
-      delay(100);
+     // delay(100);
       digitalWrite(PinBluetoothReset,LOW);
       delay(100);
       digitalWrite(PinBluetoothReset,HIGH);
@@ -120,8 +120,8 @@ void Funcion(char var){
 void loop () {
   
   estadoBotonA =digitalRead (PinSensorA);              //leemos el estado del boton
- // estadoBotonB =digitalRead (PinSensorB);              //leemos el estado del boton
-//  estadoBotonC =digitalRead (PinSensorC);              //leemos el estado del boton
+  estadoBotonB =digitalRead (PinSensorB);              //leemos el estado del boton
+  estadoBotonC =digitalRead (PinSensorC);              //leemos el estado del boton
  
   
   if ((estadoBotonA  != estadoBotonAnteriorA)||(estadoBotonA==1)) {     //si hay cambio con respeto al estado 
@@ -132,7 +132,7 @@ void loop () {
   }
    estadoBotonAnteriorA = estadoBotonA;      // guardamos el estado del boton
  
-/*
+
    if ((estadoBotonB  != estadoBotonAnteriorB)||(estadoBotonB==1)) {     //si hay cambio con respeto al estado 
     if (antirebote (PinSensorB)){   
          Serial.write ("B\r\n");         //checamos  si esta preionado y si lo esta
@@ -151,7 +151,7 @@ void loop () {
  
       estadoBotonAnteriorC = estadoBotonC;      // guardamos el estado del boton
   
-  */
+  
      if (stringComplete) {
     Funcion(inputString[0]);}
   }
