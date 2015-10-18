@@ -16,7 +16,7 @@ const int tiempoAntirebote =10;
 
 
 int comandos=0;
-int TiempoEnmascarado=20;
+int TiempoEnmascarado=30;
 int TiempoApertura=5;
 
 static  int CONTADOR=0;
