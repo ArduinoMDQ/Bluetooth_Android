@@ -103,36 +103,33 @@ void Funcion(char var){
   switch(var){
 
 
-     case 'F':
-     Serial.write ("f\r\n");//Fake alarm
-    break;
+    case 'F':
+        Serial.write ("f\r\n");//Fake alarm
+        break;
+    
     case 'L':
-     Serial.write ("l\r\n");//Loop
-    break;
+        Serial.write ("l\r\n");//Loop
+        break;
     
     case 'E':
-     Serial.write ("e\r\n");//conexion exitosa del bluetooth
-    break;
+        Serial.write ("e\r\n");//conexion exitosa del bluetooth
+        break;
     
     case 'B':
-      Serial.write ("b\r\n");  // reset bluetooth
-     // delay(100);
-      digitalWrite(PinBluetoothReset,LOW);
-      delay(100);
-      digitalWrite(PinBluetoothReset,HIGH);
-    break;
-
+        Serial.write ("b\r\n");  // reset bluetooth
+        digitalWrite(PinBluetoothReset,LOW);
+        delay(100);
+        digitalWrite(PinBluetoothReset,HIGH);
+        break;
+    
     case 'O':
       Serial.write ("o\r\n"); 
       CONTADOR=0;
       digitalWrite(PinRelayPuerta,HIGH);
-   
-     // delay(TiempoApertura*1000);
-     // digitalWrite(PinRelayPuerta,LOW);//open Door Timer    
-       break;
+      break;
     
     default:
-    break;    
+      break;    
     
     }
   
@@ -141,14 +138,16 @@ void Funcion(char var){
   }
 
 void loop () {
+  
    if (stringComplete) {
-      
-    Funcion(inputString[0]);}
+      Funcion(inputString[0]);
+      }
     
   if (memA){   
-      memA=0;
+        
          Serial.write ("A\r\n");         //checamos  si esta preionado y si lo esta
          delay(TiempoEnmascarado*1000);
+          memA=0;
  
    }
    if (stringComplete) {
@@ -156,9 +155,10 @@ void loop () {
     Funcion(inputString[0]);}
     
  if (memB){   
-      memB=0;
+         
          Serial.write ("B\r\n");         //checamos  si esta preionado y si lo esta
          delay(TiempoEnmascarado*1000);
+         memB=0;
  
    }
   if (stringComplete) {
@@ -167,9 +167,10 @@ void loop () {
     
  
     if (memC){   
-      memC=0;
+        
          Serial.write ("C\r\n");         //checamos  si esta preionado y si lo esta
          delay(TiempoEnmascarado*1000);
+         memC=0;
  
    }
   if (stringComplete) {
@@ -178,13 +179,14 @@ void loop () {
     
   
     if (memD){   
-      memD=0;
+        
          Serial.write ("D\r\n");         //checamos  si esta preionado y si lo esta
          delay(TiempoEnmascarado*1000);
+          memD=0;
  
    }
     if (stringComplete) {
-      
+    
     Funcion(inputString[0]);}
     
 
